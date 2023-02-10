@@ -27,11 +27,6 @@ const SpinningFoodWheel = () => {
   /* Settings state */
   const [settingsGameState, setSettingsGameState] = useState<any>(settingsGame);
 
-  /* Side effects */
-  useEffect(() => {
-    renderWheel();
-  }, [restaurantsState]);
-
   const renderWheel = () => {
     // determine number/size of sectors that need to created
     let numOptions = restaurantsState.length;
@@ -51,6 +46,11 @@ const SpinningFoodWheel = () => {
       angle += arcSize;
     }
   };
+
+  /* Side effects */
+  useEffect(() => {
+    renderWheel();
+  }, []);
 
   const topPosition = (num: any, angle: any) => {
     // set starting index and angle offset based on list length
@@ -88,7 +88,6 @@ const SpinningFoodWheel = () => {
     color: any
   ) => {
     // create canvas arc for each list element
-
     let canvas = document.getElementById("wheel") as HTMLCanvasElement;
 
     if (canvas) {
