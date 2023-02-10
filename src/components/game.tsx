@@ -30,7 +30,7 @@ const SpinningFoodWheel = () => {
   /* Side effects */
   useEffect(() => {
     renderWheel();
-  });
+  }, [restaurantsState]);
 
   const renderWheel = () => {
     // determine number/size of sectors that need to created
@@ -136,7 +136,7 @@ const SpinningFoodWheel = () => {
     // find net rotation and add to offset angle
     // repeat substraction of inner angle amount from total distance traversed
     // use count as an index to find value of result from state list
-    const { angle, top, offset, list } = settingsGameState;
+    const { angle, top, offset } = settingsGameState;
     let netRotation = ((spin % 360) * Math.PI) / 180; // RADIANS
     let travel = netRotation + offset;
     let count = top + 1;
@@ -148,7 +148,7 @@ const SpinningFoodWheel = () => {
     if (count >= 0) {
       result = count;
     } else {
-      result = list.length + count;
+      result = restaurantsState.length + count;
     }
 
     // set state variable to display result
@@ -199,20 +199,18 @@ const SpinningFoodWheel = () => {
       />
 
       {settingsGameState.spinning ? (
-        <button type="button" id="reset" onClick={() => reset}>
+        <button type="button" id="reset" onClick={() => reset()}>
           reset
         </button>
       ) : (
-        <button type="button" id="spin" onClick={() => spin}>
+        <button type="button" id="spin" onClick={() => spin()}>
           spin
         </button>
       )}
       <div className="display">
         <span id="readout">
           YOU WON:{""}
-          <span id="result">
-            {/*settingsGameState.list[settingsGameState.result]*/}
-          </span>
+          <span id="result">{restaurantsState[settingsGameState.result]}</span>
         </span>
       </div>
     </div>
