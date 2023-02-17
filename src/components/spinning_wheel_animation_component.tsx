@@ -2,34 +2,34 @@
 import { useEffect, useState } from "react";
 
 /* Styles */
-import "./index.css";
+//import "./index.css";
 
 /* Types */
-export type SettingsWheelComponentType = {
+type SettingsWheelComponentType = {
   segments: string[];
-  segColors: string[];
-  winningSegment: string[];
+  segColors: any;
+  winningSegment: any;
   onFinished: any;
   onRotate: any;
   onRotatefinish: any;
-  primaryColor: string;
-  primaryColoraround: string;
-  contrastColor: string;
-  buttonText: string;
-  isOnlyOnce: boolean;
-  size: number;
-  upDuration: number;
-  downDuration: number;
-  fontFamily: string;
-  width: number;
-  height: number;
+  primaryColor: any;
+  primaryColoraround: any;
+  contrastColor: any;
+  buttonText: any;
+  isOnlyOnce: any;
+  size: any;
+  upDuration: any;
+  downDuration: any;
+  fontFamily: any;
+  width: any;
+  height: any;
 };
 
 /* Objects */
 export const settingsWheelComponentObj = {
   segments: [],
-  segColors: [],
-  winningSegment: [],
+  segColors: "",
+  winningSegment: "",
   onFinished: null,
   onRotate: null,
   onRotatefinish: null,
@@ -47,26 +47,28 @@ export const settingsWheelComponentObj = {
 };
 
 /* Spinning wheel component */
-const WheelComponent = (
-  settingsWheelComponentObj: SettingsWheelComponentType
-) => {
+const SpinningWheelAnimationComponent = (settingsWheelComponentObj: any) => {
   /* Defined parameters */
   let currentSegment = "";
   let isStarted = false;
-  let timerHandle = 0;
+  let timerHandle: any = 0;
   let angleCurrent = 0;
   let angleDelta = 0;
-  let canvasContext = "";
+  let canvasContext: any = null;
   let spinStart = 0;
   let frames = 0;
-  let maxSpeed = Math.PI / settingsWheelComponentObj.segments.length;
-  const upTime = settingsWheelComponentObj.segments.length * settingsWheelComponentObj.upDuration;
-  const downTime = settingsWheelComponentObj.segments.length * settingsWheelComponentObj.downDuration;
-  const timerDelay = settingsWheelComponentObj.segments.length;
+  let maxSpeed = Math.PI / settingsWheelComponentObj.dataObj.segments.length;
+  const upTime =
+    settingsWheelComponentObj.dataObj.segments.length *
+    settingsWheelComponentObj.dataObj.upDuration;
+  const downTime =
+    settingsWheelComponentObj.dataObj.segments.length *
+    settingsWheelComponentObj.dataObj.downDuration;
+  const timerDelay = settingsWheelComponentObj.dataObj.segments.length;
   const centerX = 300;
   const centerY = 300;
 
-  /* States */
+  /* Finish action state */
   const [isFinished, setFinished] = useState(false);
 
   /* Side effects */
@@ -76,26 +78,32 @@ const WheelComponent = (
     let rootNodeRes = document.getElementById("RootNodeRes");
 
     if (rootNode) {
-      rootNode.onclick = function () {
+      rootNode.onclick = () => {
         spin();
       };
     }
 
     if (rootNodeRes) {
-      rootNodeRes.onclick = function () {
+      rootNodeRes.onclick = () => {
         spin();
       };
     }
 
+    /*  */
     wheelInit();
+
+    /* Scrolling after a timeout */
     setTimeout(() => {
       window.scrollTo(0, 1);
     }, 0);
-  }, []);
+  });
 
   /*  Settings */
   const wheelInit = () => {
+    /* Initialize canvas element area */
     initCanvas();
+
+    /* Draw the wheel */
     wheelDraw();
   };
 
@@ -104,11 +112,12 @@ const WheelComponent = (
     /* Canvas DOM element */
     let canvas = document.getElementById("canvas") as HTMLCanvasElement;
 
-    /* Check browser version */
+    /* Check the browser version */
     if (navigator.userAgent.indexOf("MSIE") !== -1) {
+      /* Canvas element creation */
       canvas = document.createElement("canvas");
-      canvas.setAttribute("width", width);
-      canvas.setAttribute("height", height);
+      canvas.setAttribute("width", settingsWheelComponentObj.dataObj.width);
+      canvas.setAttribute("height", settingsWheelComponentObj.dataObj.height);
       canvas.setAttribute("id", "canvas");
 
       /* Wheel DOM element */
@@ -129,26 +138,41 @@ const WheelComponent = (
     isStarted = true;
     if (timerHandle === 0) {
       spinStart = new Date().getTime();
-      maxSpeed = Math.PI / segments.length;
+      maxSpeed = Math.PI / settingsWheelComponentObj.dataObj.segments.length;
       frames = 0;
       timerHandle = setInterval(onTimerTick, timerDelay);
     }
   };
+
+  /* Timer */
   const onTimerTick = () => {
+    /* Settings */
     frames++;
-    draw();
+
+    /* Draw the wheel */
+    wheelDraw();
+
+    /* Duration */
     const duration = new Date().getTime() - spinStart;
+
+    /* Parameters */
     let progress = 0;
     let finished = false;
+
     if (duration < upTime) {
       progress = duration / upTime;
       angleDelta = maxSpeed * Math.sin((progress * Math.PI) / 2);
     } else {
-      if (winningSegment) {
-        if (currentSegment === winningSegment && frames > segments.length) {
+      if (settingsWheelComponentObj.dataObj.winningSegment) {
+        if (
+          currentSegment === settingsWheelComponentObj.dataObj.winningSegment &&
+          frames > settingsWheelComponentObj.dataObj.segments.length
+        ) {
           progress = duration / upTime;
+
           angleDelta =
             maxSpeed * Math.sin((progress * Math.PI) / 2 + Math.PI / 2);
+
           progress = 1;
         } else {
           progress = duration / downTime;
@@ -157,6 +181,7 @@ const WheelComponent = (
         }
       } else {
         progress = duration / downTime;
+
         if (progress >= 0.8) {
           angleDelta =
             (maxSpeed / 1.2) * Math.sin((progress * Math.PI) / 2 + Math.PI / 2);
@@ -171,12 +196,18 @@ const WheelComponent = (
     }
 
     angleCurrent += angleDelta;
+
     while (angleCurrent >= Math.PI * 2) angleCurrent -= Math.PI * 2;
+
     if (finished) {
       setFinished(true);
-      onFinished(currentSegment);
+
+      settingsWheelComponentObj.dataObj.onFinished(currentSegment);
+
       clearInterval(timerHandle);
+
       timerHandle = 0;
+
       angleDelta = 0;
     }
   };
@@ -187,43 +218,48 @@ const WheelComponent = (
     drawNeedle();
   };
 
-  const draw = () => {
-    clear();
-    drawWheel();
-    drawNeedle();
-  };
-
-  const drawSegment = (key, lastAngle, angle) => {
+  const drawSegment = (key: any, lastAngle: any, angle: any) => {
     const ctx = canvasContext;
-    const value = segments[key];
+    const value = settingsWheelComponentObj.dataObj.segments[key];
     ctx.save();
     ctx.beginPath();
     ctx.moveTo(centerX, centerY);
-    ctx.arc(centerX, centerY, size, lastAngle, angle, false);
+    ctx.arc(
+      centerX,
+      centerY,
+      settingsWheelComponentObj.dataObj.size,
+      lastAngle,
+      angle,
+      false
+    );
     ctx.lineTo(centerX, centerY);
     ctx.closePath();
-    ctx.fillStyle = segColors[key];
+    ctx.fillStyle = settingsWheelComponentObj.dataObj.segColors[key];
     ctx.fill();
     ctx.stroke();
     ctx.save();
     ctx.translate(centerX, centerY);
     ctx.rotate((lastAngle + angle) / 2);
-    ctx.fillStyle = contrastColor || "white";
-    ctx.font = "bold 1em " + fontFamily;
-    ctx.fillText(value.substr(0, 21), size / 2 + 20, 0);
+    ctx.fillStyle = settingsWheelComponentObj.dataObj.contrastColor || "white";
+    ctx.font = "bold 1em " + settingsWheelComponentObj.dataObj.fontFamily;
+    ctx.fillText(
+      value.substr(0, 21),
+      settingsWheelComponentObj.dataObj.size / 2 + 20,
+      0
+    );
     ctx.restore();
   };
 
   const drawWheel = () => {
     const ctx = canvasContext;
     let lastAngle = angleCurrent;
-    const len = segments.length;
+    const len = settingsWheelComponentObj.dataObj.segments.length;
     const PI2 = Math.PI * 2;
     ctx.lineWidth = 1;
-    ctx.strokeStyle = primaryColor || "black";
+    ctx.strokeStyle = settingsWheelComponentObj.dataObj.primaryColor || "black";
     ctx.textBaseline = "middle";
     ctx.textAlign = "center";
-    ctx.font = "1em " + fontFamily;
+    ctx.font = "1em " + settingsWheelComponentObj.dataObj.fontFamily;
     for (let i = 1; i <= len; i++) {
       const angle = PI2 * (i / len) + angleCurrent;
       drawSegment(i - 1, lastAngle, angle);
@@ -234,30 +270,44 @@ const WheelComponent = (
     ctx.beginPath();
     ctx.arc(centerX, centerY, 40, 0, PI2, false);
     ctx.closePath();
-    ctx.fillStyle = primaryColor || "black";
+    ctx.fillStyle = settingsWheelComponentObj.dataObj.primaryColor || "black";
     ctx.lineWidth = 5;
-    ctx.strokeStyle = contrastColor || "white";
+    ctx.strokeStyle =
+      settingsWheelComponentObj.dataObj.contrastColor || "white";
     ctx.fill();
-    ctx.font = "bold 2em " + fontFamily;
-    ctx.fillStyle = contrastColor || "white";
+    ctx.font = "bold 2em " + settingsWheelComponentObj.dataObj.fontFamily;
+    ctx.fillStyle = settingsWheelComponentObj.dataObj.contrastColor || "white";
     ctx.textAlign = "center";
-    ctx.fillText(buttonText || "Spin", centerX, centerY + 3);
+    ctx.fillText(
+      settingsWheelComponentObj.dataObj.buttonText || "Spin",
+      centerX,
+      centerY + 3
+    );
     ctx.stroke();
 
     // Draw outer circle
     ctx.beginPath();
-    ctx.arc(centerX, centerY, size, 0, PI2, false);
+    ctx.arc(
+      centerX,
+      centerY,
+      settingsWheelComponentObj.dataObj.size,
+      0,
+      PI2,
+      false
+    );
     ctx.closePath();
     ctx.lineWidth = 25;
-    ctx.strokeStyle = primaryColoraround || "white";
+    ctx.strokeStyle =
+      settingsWheelComponentObj.dataObj.primaryColoraround || "white";
     ctx.stroke();
   };
 
   const drawNeedle = () => {
     const ctx = canvasContext;
     ctx.lineWidth = 1;
-    ctx.strokeStyle = contrastColor || "white";
-    ctx.fileStyle = contrastColor || "white";
+    ctx.strokeStyle =
+      settingsWheelComponentObj.dataObj.contrastColor || "white";
+    ctx.fileStyle = settingsWheelComponentObj.dataObj.contrastColor || "white";
     ctx.beginPath();
     ctx.moveTo(centerX + 10, centerY - 40);
     ctx.lineTo(centerX - 10, centerY - 40);
@@ -266,17 +316,24 @@ const WheelComponent = (
     ctx.fill();
     const change = angleCurrent + Math.PI / 2;
     let i =
-      segments.length -
-      Math.floor((change / (Math.PI * 2)) * segments.length) -
+      settingsWheelComponentObj.dataObj.segments.length -
+      Math.floor(
+        (change / (Math.PI * 2)) *
+          settingsWheelComponentObj.dataObj.segments.length
+      ) -
       1;
-    if (i < 0) i = i + segments.length;
+    if (i < 0) i = i + settingsWheelComponentObj.dataObj.segments.length;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillStyle = "transparent";
-    ctx.font = "bold 1.5em " + fontFamily;
-    currentSegment = segments[i];
+    ctx.font = "bold 1.5em " + settingsWheelComponentObj.dataObj.fontFamily;
+    currentSegment = settingsWheelComponentObj.dataObj.segments[i];
     isStarted &&
-      ctx.fillText(currentSegment, centerX + 10, centerY + size + 50);
+      ctx.fillText(
+        currentSegment,
+        centerX + 10,
+        centerY + settingsWheelComponentObj.dataObj.size + 50
+      );
   };
   const clear = () => {
     const ctx = canvasContext;
@@ -289,11 +346,14 @@ const WheelComponent = (
         width="600"
         height="600"
         style={{
-          pointerEvents: isFinished && isOnlyOnce ? "none" : "auto",
+          pointerEvents:
+            isFinished && settingsWheelComponentObj.dataObj.isOnlyOnce
+              ? "none"
+              : "auto",
         }}
       />
     </div>
   );
 };
 
-export default WheelComponent;
+export default SpinningWheelAnimationComponent;
