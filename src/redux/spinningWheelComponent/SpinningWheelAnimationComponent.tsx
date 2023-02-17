@@ -115,12 +115,21 @@ const SpinningWheelAnimationComponent = (
     }
   };
 
+  /* Run to spin the wheel */
   const spin = () => {
     isStarted = true;
+
     if (timerHandle === 0) {
+      /* Get time now */
       spinStart = new Date().getTime();
+
+      /* Maximum speed */
       maxSpeed = Math.PI / propertiesWheelComponentObj.dataObj.segments.length;
+
+      /* Animation frames number */
       frames = 0;
+
+      /*  */
       timerHandle = setInterval(onTimerTick, timerDelay);
     }
   };
@@ -261,12 +270,10 @@ const SpinningWheelAnimationComponent = (
     ctx.closePath();
     ctx.fillStyle = propertiesWheelComponentObj.dataObj.primaryColor;
     ctx.lineWidth = 5;
-    ctx.strokeStyle =
-      propertiesWheelComponentObj.dataObj.contrastColor;
+    ctx.strokeStyle = propertiesWheelComponentObj.dataObj.contrastColor;
     ctx.fill();
     ctx.font = "bold 2em " + propertiesWheelComponentObj.dataObj.fontFamily;
-    ctx.fillStyle =
-      propertiesWheelComponentObj.dataObj.contrastColor;
+    ctx.fillStyle = propertiesWheelComponentObj.dataObj.contrastColor;
     ctx.textAlign = "center";
     ctx.fillText(
       propertiesWheelComponentObj.dataObj.buttonText,
@@ -287,18 +294,15 @@ const SpinningWheelAnimationComponent = (
     );
     ctx.closePath();
     ctx.lineWidth = 10;
-    ctx.strokeStyle =
-      propertiesWheelComponentObj.dataObj.primaryColoraround;
+    ctx.strokeStyle = propertiesWheelComponentObj.dataObj.primaryColoraround;
     ctx.stroke();
   };
 
   const drawNeedle = () => {
     const ctx = canvasContext;
     ctx.lineWidth = 1;
-    ctx.strokeStyle =
-      propertiesWheelComponentObj.dataObj.contrastColor;
-    ctx.fileStyle =
-      propertiesWheelComponentObj.dataObj.contrastColor;
+    ctx.strokeStyle = propertiesWheelComponentObj.dataObj.contrastColor;
+    ctx.fileStyle = propertiesWheelComponentObj.dataObj.contrastColor;
     ctx.beginPath();
     ctx.moveTo(centerX + 10, centerY - 40);
     ctx.lineTo(centerX - 10, centerY - 40);
