@@ -1,14 +1,15 @@
-// import React from "react";
+/* React */
 import "./App.css";
 
+/* Spinning food wheel component */
 import SpinningFoodWheelComponent from "./components/spinning_wheel_component";
 
-function App() {
+const App = () => {
   return (
     <>
       <SpinningFoodWheelComponent />
     </>
   );
-}
+};
 
 export default App;

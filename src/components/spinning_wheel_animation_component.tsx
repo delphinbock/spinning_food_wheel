@@ -1,53 +1,36 @@
 /* React */
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 /* Styles */
 //import "./index.css";
 
 /* Types */
 type SettingsWheelComponentType = {
-  segments: string[];
-  segColors: any;
-  winningSegment: any;
-  onFinished: any;
-  onRotate: any;
-  onRotatefinish: any;
-  primaryColor: any;
-  primaryColoraround: any;
-  contrastColor: any;
-  buttonText: any;
-  isOnlyOnce: any;
-  size: any;
-  upDuration: any;
-  downDuration: any;
-  fontFamily: any;
-  width: any;
-  height: any;
-};
-
-/* Objects */
-export const settingsWheelComponentObj = {
-  segments: [],
-  segColors: "",
-  winningSegment: "",
-  onFinished: null,
-  onRotate: null,
-  onRotatefinish: null,
-  primaryColor: "",
-  primaryColoraround: "",
-  contrastColor: "",
-  buttonText: "",
-  isOnlyOnce: true,
-  size: 290,
-  upDuration: 1000,
-  downDuration: 100,
-  fontFamily: "proxima-nova",
-  width: 100,
-  height: 100,
+  dataObj: {
+    segments: string[];
+    segColors: any;
+    winningSegment: any;
+    onFinished: any;
+    onRotate: any;
+    onRotatefinish: any;
+    primaryColor: string;
+    primaryColoraround: any;
+    contrastColor: any;
+    buttonText: any;
+    isOnlyOnce: any;
+    size: any;
+    upDuration: any;
+    downDuration: any;
+    fontFamily: any;
+    width: any;
+    height: any;
+  };
 };
 
 /* Spinning wheel component */
-const SpinningWheelAnimationComponent = (settingsWheelComponentObj: any) => {
+const SpinningWheelAnimationComponent = (
+  settingsWheelComponentObj: SettingsWheelComponentType
+) => {
   /* Defined parameters */
   let currentSegment = "";
   let isStarted = false;
@@ -68,6 +51,8 @@ const SpinningWheelAnimationComponent = (settingsWheelComponentObj: any) => {
   const centerX = 300;
   const centerY = 300;
 
+  console.log("test", settingsWheelComponentObj);
+
   /* Finish action state */
   const [isFinished, setFinished] = useState(false);
 
@@ -77,25 +62,28 @@ const SpinningWheelAnimationComponent = (settingsWheelComponentObj: any) => {
     let rootNode = document.getElementById("RootNode");
     let rootNodeRes = document.getElementById("RootNodeRes");
 
-    if (rootNode) {
+    console.log(rootNode);
+    console.log(rootNodeRes);
+
+    if (rootNode !== null) {
       rootNode.onclick = () => {
         spin();
       };
     }
 
-    if (rootNodeRes) {
+    if (rootNodeRes !== null) {
       rootNodeRes.onclick = () => {
         spin();
       };
     }
 
-    /*  */
+    /* Initialization */
     wheelInit();
 
     /* Scrolling after a timeout */
-    setTimeout(() => {
-      window.scrollTo(0, 1);
-    }, 0);
+    // setTimeout(() => {
+    //   window.scrollTo(0, 1);
+    // }, 0);
   });
 
   /*  Settings */
@@ -213,8 +201,13 @@ const SpinningWheelAnimationComponent = (settingsWheelComponentObj: any) => {
   };
 
   const wheelDraw = () => {
+    /* Reinitialize */
     clear();
+
+    /* Draw the wheel */
     drawWheel();
+
+    /* Draw the needle */
     drawNeedle();
   };
 
@@ -266,7 +259,7 @@ const SpinningWheelAnimationComponent = (settingsWheelComponentObj: any) => {
       lastAngle = angle;
     }
 
-    // Draw a center circle
+    /* Draw a center circle */
     ctx.beginPath();
     ctx.arc(centerX, centerY, 40, 0, PI2, false);
     ctx.closePath();
@@ -335,24 +328,29 @@ const SpinningWheelAnimationComponent = (settingsWheelComponentObj: any) => {
         centerY + settingsWheelComponentObj.dataObj.size + 50
       );
   };
+
   const clear = () => {
     const ctx = canvasContext;
     ctx.clearRect(0, 0, 1000, 800);
   };
+
   return (
-    <div id="wheel">
-      <canvas
-        id="canvas"
-        width="600"
-        height="600"
-        style={{
-          pointerEvents:
-            isFinished && settingsWheelComponentObj.dataObj.isOnlyOnce
-              ? "none"
-              : "auto",
-        }}
-      />
-    </div>
+    <>
+      <div id="wheel">
+        <canvas
+          onClick={() => spin()}
+          id="canvas"
+          width="600"
+          height="600"
+          style={{
+            pointerEvents:
+              isFinished && settingsWheelComponentObj.dataObj.isOnlyOnce
+                ? "none"
+                : "auto",
+          }}
+        />
+      </div>
+    </>
   );
 };
 

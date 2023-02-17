@@ -1,20 +1,41 @@
+/* React */
+import { useState, useEffect } from "react";
+
+/* Spinning wheel animation component */
 import SpinningWheelAnimationComponent from "./spinning_wheel_animation_component";
 
+/* Main library */
+import { randomHexaColorArray } from "../libraries/main_library";
+
 /* Spinning food wheel component */
-const spinningFoodWheelComponent = () => {
-  /* Parameters */
-  const segments = ["Grüne", "Les italiens du coin", "Royal kebab", "Onolulu", "Yam Yam"];
-  const segColors = ["#EE4040", "#F0CF50", "#815CD1", "#3DA5E0", "#FF9000"];
+const SpinningFoodWheelComponent = () => {
+  /* Default restaurants name */
+  const segments = [
+    "Grüne",
+    "Les italiens du coin",
+    "Royal kebab",
+    "Onolulu",
+    "Yam Yam",
+    "Road Side",
+    "Big Fernand",
+  ];
 
   /* Console message on finish */
   const onFinished = (winner: any) => {
     console.log(winner);
   };
 
-  /* Data object */
-  let dataObj = {
+  /* Colors segments */
+  const segColors = async (segments: any) => {
+    return await randomHexaColorArray(segments);
+  };
+
+  console.log(segColors(segments));
+
+  /* Data object state */
+  const dataObj = {
     segments: segments,
-    segColors: segColors,
+    segColors: segColors(segments),
     winningSegment: "",
     onFinished: (winner: any) => onFinished(winner),
     onRotate: null,
@@ -39,4 +60,4 @@ const spinningFoodWheelComponent = () => {
   );
 };
 
-export default spinningFoodWheelComponent;
+export default SpinningFoodWheelComponent;
