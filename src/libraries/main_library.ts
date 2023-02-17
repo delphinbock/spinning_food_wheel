@@ -31,13 +31,11 @@ export const randomRgbColorArray = (itemsArray: string[]) => {
 
 /* Generate a random Hexa color */
 export const randomHexaColorArray = (itemsArray: string[]) => {
-  return new Promise(async (resolve, reject) => {
+  return new Promise(async (resolve: any, reject) => {
     try {
-      /* Settings */
-      //let resultArray: string[] = [];
-
-      const resultArray = itemsArray.map(async () => {
-        /* Random hexa color */
+      /* Results array */
+      const resultArray = itemsArray.map(() => {
+        /* Random hexa color, "Math.floor" => integer less than or equal, "16777215" => decimal, "16" => base 16: Hexadecimal, 16 symbols: [0, 9] and [A, F] */
         let randomHexaColor = Math.floor(Math.random() * 16777215).toString(16);
 
         randomHexaColor = `#${randomHexaColor}`;
@@ -45,19 +43,7 @@ export const randomHexaColorArray = (itemsArray: string[]) => {
         return randomHexaColor;
       });
 
-      // /* Run each item */
-      // itemsArray.forEach(async () => {
-      //   /* Random hexa color */
-      //   let randomHexaColor = Math.floor(Math.random() * 16777215).toString(16);
-
-      //   randomHexaColor = `#${randomHexaColor}`;
-
-      //   resultArray.push(randomHexaColor);
-      // });
-
-      //console.log(Promise.all(resultArray));
-
-      resolve(Promise.all(resultArray));
+      resolve(resultArray);
     } catch (error) {
       reject(console.log);
     }

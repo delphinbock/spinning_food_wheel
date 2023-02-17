@@ -1,5 +1,5 @@
 /* React */
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 
 /* Styles */
 //import "./index.css";
@@ -29,7 +29,7 @@ type SettingsWheelComponentType = {
 
 /* Spinning wheel component */
 const SpinningWheelAnimationComponent = (
-  settingsWheelComponentObj: SettingsWheelComponentType
+  propertiesWheelComponentObj: SettingsWheelComponentType
 ) => {
   /* Defined parameters */
   let currentSegment = "";
@@ -40,18 +40,16 @@ const SpinningWheelAnimationComponent = (
   let canvasContext: any = null;
   let spinStart = 0;
   let frames = 0;
-  let maxSpeed = Math.PI / settingsWheelComponentObj.dataObj.segments.length;
+  let maxSpeed = Math.PI / propertiesWheelComponentObj.dataObj.segments.length;
   const upTime =
-    settingsWheelComponentObj.dataObj.segments.length *
-    settingsWheelComponentObj.dataObj.upDuration;
+    propertiesWheelComponentObj.dataObj.segments.length *
+    propertiesWheelComponentObj.dataObj.upDuration;
   const downTime =
-    settingsWheelComponentObj.dataObj.segments.length *
-    settingsWheelComponentObj.dataObj.downDuration;
-  const timerDelay = settingsWheelComponentObj.dataObj.segments.length;
+    propertiesWheelComponentObj.dataObj.segments.length *
+    propertiesWheelComponentObj.dataObj.downDuration;
+  const timerDelay = propertiesWheelComponentObj.dataObj.segments.length;
   const centerX = 300;
   const centerY = 300;
-
-  console.log("test", settingsWheelComponentObj);
 
   /* Finish action state */
   const [isFinished, setFinished] = useState(false);
@@ -79,11 +77,6 @@ const SpinningWheelAnimationComponent = (
 
     /* Initialization */
     wheelInit();
-
-    /* Scrolling after a timeout */
-    // setTimeout(() => {
-    //   window.scrollTo(0, 1);
-    // }, 0);
   });
 
   /*  Settings */
@@ -104,8 +97,8 @@ const SpinningWheelAnimationComponent = (
     if (navigator.userAgent.indexOf("MSIE") !== -1) {
       /* Canvas element creation */
       canvas = document.createElement("canvas");
-      canvas.setAttribute("width", settingsWheelComponentObj.dataObj.width);
-      canvas.setAttribute("height", settingsWheelComponentObj.dataObj.height);
+      canvas.setAttribute("width", propertiesWheelComponentObj.dataObj.width);
+      canvas.setAttribute("height", propertiesWheelComponentObj.dataObj.height);
       canvas.setAttribute("id", "canvas");
 
       /* Wheel DOM element */
@@ -126,7 +119,7 @@ const SpinningWheelAnimationComponent = (
     isStarted = true;
     if (timerHandle === 0) {
       spinStart = new Date().getTime();
-      maxSpeed = Math.PI / settingsWheelComponentObj.dataObj.segments.length;
+      maxSpeed = Math.PI / propertiesWheelComponentObj.dataObj.segments.length;
       frames = 0;
       timerHandle = setInterval(onTimerTick, timerDelay);
     }
@@ -151,10 +144,11 @@ const SpinningWheelAnimationComponent = (
       progress = duration / upTime;
       angleDelta = maxSpeed * Math.sin((progress * Math.PI) / 2);
     } else {
-      if (settingsWheelComponentObj.dataObj.winningSegment) {
+      if (propertiesWheelComponentObj.dataObj.winningSegment) {
         if (
-          currentSegment === settingsWheelComponentObj.dataObj.winningSegment &&
-          frames > settingsWheelComponentObj.dataObj.segments.length
+          currentSegment ===
+            propertiesWheelComponentObj.dataObj.winningSegment &&
+          frames > propertiesWheelComponentObj.dataObj.segments.length
         ) {
           progress = duration / upTime;
 
@@ -188,9 +182,9 @@ const SpinningWheelAnimationComponent = (
     while (angleCurrent >= Math.PI * 2) angleCurrent -= Math.PI * 2;
 
     if (finished) {
-      setFinished(true);
+      //setFinished(true);
 
-      settingsWheelComponentObj.dataObj.onFinished(currentSegment);
+      propertiesWheelComponentObj.dataObj.onFinished(currentSegment);
 
       clearInterval(timerHandle);
 
@@ -213,31 +207,32 @@ const SpinningWheelAnimationComponent = (
 
   const drawSegment = (key: any, lastAngle: any, angle: any) => {
     const ctx = canvasContext;
-    const value = settingsWheelComponentObj.dataObj.segments[key];
+    const value = propertiesWheelComponentObj.dataObj.segments[key];
     ctx.save();
     ctx.beginPath();
     ctx.moveTo(centerX, centerY);
     ctx.arc(
       centerX,
       centerY,
-      settingsWheelComponentObj.dataObj.size,
+      propertiesWheelComponentObj.dataObj.size,
       lastAngle,
       angle,
       false
     );
     ctx.lineTo(centerX, centerY);
     ctx.closePath();
-    ctx.fillStyle = settingsWheelComponentObj.dataObj.segColors[key];
+    ctx.fillStyle = propertiesWheelComponentObj.dataObj.segColors[key];
     ctx.fill();
     ctx.stroke();
     ctx.save();
     ctx.translate(centerX, centerY);
     ctx.rotate((lastAngle + angle) / 2);
-    ctx.fillStyle = settingsWheelComponentObj.dataObj.contrastColor || "white";
-    ctx.font = "bold 1em " + settingsWheelComponentObj.dataObj.fontFamily;
+    ctx.fillStyle =
+      propertiesWheelComponentObj.dataObj.contrastColor || "white";
+    ctx.font = "bold 1em " + propertiesWheelComponentObj.dataObj.fontFamily;
     ctx.fillText(
-      value.substr(0, 21),
-      settingsWheelComponentObj.dataObj.size / 2 + 20,
+      value.substring(0, 21),
+      propertiesWheelComponentObj.dataObj.size / 2 + 20,
       0
     );
     ctx.restore();
@@ -246,13 +241,14 @@ const SpinningWheelAnimationComponent = (
   const drawWheel = () => {
     const ctx = canvasContext;
     let lastAngle = angleCurrent;
-    const len = settingsWheelComponentObj.dataObj.segments.length;
+    const len = propertiesWheelComponentObj.dataObj.segments.length;
     const PI2 = Math.PI * 2;
     ctx.lineWidth = 1;
-    ctx.strokeStyle = settingsWheelComponentObj.dataObj.primaryColor || "black";
+    ctx.strokeStyle =
+      propertiesWheelComponentObj.dataObj.primaryColor || "black";
     ctx.textBaseline = "middle";
     ctx.textAlign = "center";
-    ctx.font = "1em " + settingsWheelComponentObj.dataObj.fontFamily;
+    ctx.font = "1em " + propertiesWheelComponentObj.dataObj.fontFamily;
     for (let i = 1; i <= len; i++) {
       const angle = PI2 * (i / len) + angleCurrent;
       drawSegment(i - 1, lastAngle, angle);
@@ -263,16 +259,17 @@ const SpinningWheelAnimationComponent = (
     ctx.beginPath();
     ctx.arc(centerX, centerY, 40, 0, PI2, false);
     ctx.closePath();
-    ctx.fillStyle = settingsWheelComponentObj.dataObj.primaryColor || "black";
+    ctx.fillStyle = propertiesWheelComponentObj.dataObj.primaryColor;
     ctx.lineWidth = 5;
     ctx.strokeStyle =
-      settingsWheelComponentObj.dataObj.contrastColor || "white";
+      propertiesWheelComponentObj.dataObj.contrastColor;
     ctx.fill();
-    ctx.font = "bold 2em " + settingsWheelComponentObj.dataObj.fontFamily;
-    ctx.fillStyle = settingsWheelComponentObj.dataObj.contrastColor || "white";
+    ctx.font = "bold 2em " + propertiesWheelComponentObj.dataObj.fontFamily;
+    ctx.fillStyle =
+      propertiesWheelComponentObj.dataObj.contrastColor;
     ctx.textAlign = "center";
     ctx.fillText(
-      settingsWheelComponentObj.dataObj.buttonText || "Spin",
+      propertiesWheelComponentObj.dataObj.buttonText,
       centerX,
       centerY + 3
     );
@@ -283,15 +280,15 @@ const SpinningWheelAnimationComponent = (
     ctx.arc(
       centerX,
       centerY,
-      settingsWheelComponentObj.dataObj.size,
+      propertiesWheelComponentObj.dataObj.size,
       0,
       PI2,
       false
     );
     ctx.closePath();
-    ctx.lineWidth = 25;
+    ctx.lineWidth = 10;
     ctx.strokeStyle =
-      settingsWheelComponentObj.dataObj.primaryColoraround || "white";
+      propertiesWheelComponentObj.dataObj.primaryColoraround;
     ctx.stroke();
   };
 
@@ -299,8 +296,9 @@ const SpinningWheelAnimationComponent = (
     const ctx = canvasContext;
     ctx.lineWidth = 1;
     ctx.strokeStyle =
-      settingsWheelComponentObj.dataObj.contrastColor || "white";
-    ctx.fileStyle = settingsWheelComponentObj.dataObj.contrastColor || "white";
+      propertiesWheelComponentObj.dataObj.contrastColor;
+    ctx.fileStyle =
+      propertiesWheelComponentObj.dataObj.contrastColor;
     ctx.beginPath();
     ctx.moveTo(centerX + 10, centerY - 40);
     ctx.lineTo(centerX - 10, centerY - 40);
@@ -309,23 +307,23 @@ const SpinningWheelAnimationComponent = (
     ctx.fill();
     const change = angleCurrent + Math.PI / 2;
     let i =
-      settingsWheelComponentObj.dataObj.segments.length -
+      propertiesWheelComponentObj.dataObj.segments.length -
       Math.floor(
         (change / (Math.PI * 2)) *
-          settingsWheelComponentObj.dataObj.segments.length
+          propertiesWheelComponentObj.dataObj.segments.length
       ) -
       1;
-    if (i < 0) i = i + settingsWheelComponentObj.dataObj.segments.length;
+    if (i < 0) i = i + propertiesWheelComponentObj.dataObj.segments.length;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillStyle = "transparent";
-    ctx.font = "bold 1.5em " + settingsWheelComponentObj.dataObj.fontFamily;
-    currentSegment = settingsWheelComponentObj.dataObj.segments[i];
+    ctx.font = "bold 1.5em " + propertiesWheelComponentObj.dataObj.fontFamily;
+    currentSegment = propertiesWheelComponentObj.dataObj.segments[i];
     isStarted &&
       ctx.fillText(
         currentSegment,
         centerX + 10,
-        centerY + settingsWheelComponentObj.dataObj.size + 50
+        centerY + propertiesWheelComponentObj.dataObj.size + 50
       );
   };
 
@@ -344,7 +342,7 @@ const SpinningWheelAnimationComponent = (
           height="600"
           style={{
             pointerEvents:
-              isFinished && settingsWheelComponentObj.dataObj.isOnlyOnce
+              isFinished && propertiesWheelComponentObj.dataObj.isOnlyOnce
                 ? "none"
                 : "auto",
           }}
