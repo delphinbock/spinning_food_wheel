@@ -1,5 +1,5 @@
 /* React */
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 
 /* Redux types */
 import type { RootState, AppDispatch } from "../../index";
