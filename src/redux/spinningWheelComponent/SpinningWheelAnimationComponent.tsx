@@ -101,7 +101,7 @@ const SpinningWheelAnimationComponent = (
       canvas.setAttribute("height", propertiesWheelComponentObj.dataObj.height);
       canvas.setAttribute("id", "canvas");
 
-      /* Wheel DOM element */
+      /* Get Wheel DOM element */
       let wheelElement = document.getElementById("wheel");
 
       /* Append canvas element */
@@ -203,8 +203,9 @@ const SpinningWheelAnimationComponent = (
     }
   };
 
+  /* Draw the wheel */
   const wheelDraw = () => {
-    /* Reinitialize */
+    /* Reinitialize the wheel */
     clear();
 
     /* Draw the wheel */
@@ -214,9 +215,17 @@ const SpinningWheelAnimationComponent = (
     drawNeedle();
   };
 
+  /* Draw & name each segment */
   const drawSegment = (key: any, lastAngle: any, angle: any) => {
+    /* Set the canvas context */
     const ctx = canvasContext;
+
+    /* Name for each segment */
     const value = propertiesWheelComponentObj.dataObj.segments[key];
+    //const value = "test 🍔";
+
+    ctx.strokeText(value, 50, 90);
+
     ctx.save();
     ctx.beginPath();
     ctx.moveTo(centerX, centerY);
@@ -230,15 +239,27 @@ const SpinningWheelAnimationComponent = (
     );
     ctx.lineTo(centerX, centerY);
     ctx.closePath();
+
+    /* Color for each segment */
     ctx.fillStyle = propertiesWheelComponentObj.dataObj.segColors[key];
+
     ctx.fill();
     ctx.stroke();
     ctx.save();
     ctx.translate(centerX, centerY);
     ctx.rotate((lastAngle + angle) / 2);
-    ctx.fillStyle =
-      propertiesWheelComponentObj.dataObj.contrastColor || "white";
-    ctx.font = "bold 1em " + propertiesWheelComponentObj.dataObj.fontFamily;
+
+    ctx.fillStyle = propertiesWheelComponentObj.dataObj.contrastColor;
+
+    ctx.strokeStyle = "white";
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    //ctx.strokeText('Some text', 50, 50);
+
+    /* Font text for each segment */
+    ctx.font = `bold 1em ${propertiesWheelComponentObj.dataObj.fontFamily}`;
+
     ctx.fillText(
       value.substring(0, 21),
       propertiesWheelComponentObj.dataObj.size / 2 + 20,
