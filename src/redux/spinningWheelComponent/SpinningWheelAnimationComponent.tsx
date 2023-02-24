@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 /* Styles */
 //import "./index.css";
 
-/* Types */
+/* Type */
 type SettingsWheelComponentType = {
   dataObj: {
     segments: string[];
@@ -31,77 +31,114 @@ type SettingsWheelComponentType = {
 const SpinningWheelAnimationComponent = (
   propertiesWheelComponentObj: SettingsWheelComponentType
 ) => {
-  /* Defined parameters */
+  /* Default current segment*/
   let currentSegment = "";
+
+  /* Default start action */
   let isStarted = false;
+
+  /* Default timer */
   let timerHandle: any = 0;
+
+  /* Default current angle's degree */
   let angleCurrent = 0;
+
+  /* Default delta angle's degree */
   let angleDelta = 0;
+
+  /* Default canvas context */
   let canvasContext: any = null;
+
+  /* Default spin start action */
   let spinStart = 0;
+
+  /* Default anmation's frame number */
   let frames = 0;
+
+  /* Default max speed wheel animation */
   let maxSpeed = Math.PI / propertiesWheelComponentObj.dataObj.segments.length;
+
+  /* Duration time of working animation */
   const upTime =
     propertiesWheelComponentObj.dataObj.segments.length *
     propertiesWheelComponentObj.dataObj.upDuration;
+
+  /* Break time of animation */
   const downTime =
     propertiesWheelComponentObj.dataObj.segments.length *
     propertiesWheelComponentObj.dataObj.downDuration;
+
+  /* Time delay */
   const timerDelay = propertiesWheelComponentObj.dataObj.segments.length;
+
+  /* Centered position on X axle of the wheel */
   const centerX = 300;
+
+  /* Centered position on Y axle of the wheel */
   const centerY = 300;
 
-  /* Finish action state */
+  /* Finish animation action state */
   const [isFinished, setFinished] = useState(false);
 
   /* Side effects */
   useEffect(() => {
-    /* DOM elements */
+    /* Get the "RootNode" DOM element from its ID */
     let rootNode = document.getElementById("RootNode");
+
+    /* Get the "RootNodeRes" DOM element from its ID */
     let rootNodeRes = document.getElementById("RootNodeRes");
 
-    console.log(rootNode);
-    console.log(rootNodeRes);
-
+    /* Check if "rootNode" DOM element is existing */
     if (rootNode !== null) {
+      /* Create a "onClick" funcion on "RootNode" DOM element */
       rootNode.onclick = () => {
+        /* Run "spin" function */
         spin();
       };
     }
 
+    /* Check if "rootNodeRes" DOM element is existing */
     if (rootNodeRes !== null) {
+      /* Create a "onClick" funcion on "RootNode" DOM element */
       rootNodeRes.onclick = () => {
+        /* Run "spin" function */
         spin();
       };
     }
 
-    /* Initialization */
+    /* Run wheel's initialization function */
     wheelInit();
   });
 
-  /*  Settings */
+  /*  Initialize the wheel */
   const wheelInit = () => {
-    /* Initialize canvas element area */
+    /* Initialize canvas DOM element area */
     initCanvas();
 
-    /* Draw the wheel */
+    /* Run the "draw the wheel" function */
     wheelDraw();
   };
 
-  /* Canvas */
+  /* Initialize the canvas DOM element */
   const initCanvas = () => {
-    /* Canvas DOM element */
+    /* Get the "canvas" DOM element from its ID */
     let canvas = document.getElementById("canvas") as HTMLCanvasElement;
 
-    /* Check the browser version */
+    /* Check the browser version - MSIE => MicroSoft Internet Explorer */
     if (navigator.userAgent.indexOf("MSIE") !== -1) {
       /* Canvas element creation */
       canvas = document.createElement("canvas");
+
+      /* Add an attribute "width" to canvas DOM element */
       canvas.setAttribute("width", propertiesWheelComponentObj.dataObj.width);
+
+      /* Add an attribute "height" to canvas DOM element */
       canvas.setAttribute("height", propertiesWheelComponentObj.dataObj.height);
+
+      /* Add an attribute "id" to canvas DOM element */
       canvas.setAttribute("id", "canvas");
 
-      /* Get Wheel DOM element */
+      /* Get "wheel" DOM element from its ID */
       let wheelElement = document.getElementById("wheel");
 
       /* Append canvas element */
@@ -110,7 +147,9 @@ const SpinningWheelAnimationComponent = (
       }
     }
 
+    /* Check if canvas DOM element is existing */
     if (canvas) {
+      /* Set the type of canvas context */
       canvasContext = canvas.getContext("2d");
     }
   };
@@ -119,6 +158,7 @@ const SpinningWheelAnimationComponent = (
   const spin = () => {
     isStarted = true;
 
+    /* Check if the delay of timer */
     if (timerHandle === 0) {
       /* Get time now */
       spinStart = new Date().getTime();
@@ -129,89 +169,119 @@ const SpinningWheelAnimationComponent = (
       /* Animation frames number */
       frames = 0;
 
-      /*  */
+      /* Delay of timer */
       timerHandle = setInterval(onTimerTick, timerDelay);
     }
   };
 
-  /* Timer */
+  /* Run after the delay of timer */
   const onTimerTick = () => {
-    /* Settings */
+    /* Increase by one the frame animation's number */
     frames++;
 
-    /* Draw the wheel */
+    /* Run "draw the wheel" function */
     wheelDraw();
 
-    /* Duration */
+    /* Duration of the animation - Time between the "time now" and the "start spin time" */
     const duration = new Date().getTime() - spinStart;
 
-    /* Parameters */
+    /* Default animation's progress parameter */
     let progress = 0;
+
+    /* Default animation's finished parameter */
     let finished = false;
 
+    /* Check if the animation is ready */
     if (duration < upTime) {
+      /* Set the animation's progress time */
       progress = duration / upTime;
+
+      /* Set the delta angle's degree */
       angleDelta = maxSpeed * Math.sin((progress * Math.PI) / 2);
     } else {
+      /* Check if the winning segment is existing */
       if (propertiesWheelComponentObj.dataObj.winningSegment) {
+        /* Check if the current segment is existing & if the wheel's animation is ready */
         if (
           currentSegment ===
             propertiesWheelComponentObj.dataObj.winningSegment &&
           frames > propertiesWheelComponentObj.dataObj.segments.length
         ) {
+          /* Animation's progress time */
           progress = duration / upTime;
 
+          /* Delta angle's degree */
           angleDelta =
             maxSpeed * Math.sin((progress * Math.PI) / 2 + Math.PI / 2);
 
+          /* Animation's progress time */
           progress = 1;
         } else {
+          /* Animation's progress time */
           progress = duration / downTime;
+
+          /* Delta angle's degree */
           angleDelta =
             maxSpeed * Math.sin((progress * Math.PI) / 2 + Math.PI / 2);
         }
       } else {
+        /* Animation's progress time */
         progress = duration / downTime;
 
+        /* Check if the animation's progress time is running at 0.8 seconde */
         if (progress >= 0.8) {
+          /* Delta angle's degree */
           angleDelta =
             (maxSpeed / 1.2) * Math.sin((progress * Math.PI) / 2 + Math.PI / 2);
+
+          /* Check if the animation's progress time is running at 0.98 seconde */
         } else if (progress >= 0.98) {
           angleDelta =
             (maxSpeed / 2) * Math.sin((progress * Math.PI) / 2 + Math.PI / 2);
         } else
+        /* Delta angle's degree */
           angleDelta =
             maxSpeed * Math.sin((progress * Math.PI) / 2 + Math.PI / 2);
       }
+
+      /* Check if the animation's progress is over */
       if (progress >= 1) finished = true;
     }
 
+    /* Addition of current angle's degree & delta angle's degree */
     angleCurrent += angleDelta;
 
+    /* While the current angle (x°) have rotated a full circle (360°) => substraction of current angle (x°) & full circle (360°) */
     while (angleCurrent >= Math.PI * 2) angleCurrent -= Math.PI * 2;
 
+    /* Check if the animation is finished */
     if (finished) {
+      /* Reinitialize the wheel's animation */
       //setFinished(true);
 
+      /* Reinitialize the segments */
       propertiesWheelComponentObj.dataObj.onFinished(currentSegment);
 
+      /* Reset the interval time */
       clearInterval(timerHandle);
 
+      /* Reinitialize the timer */
       timerHandle = 0;
 
+      /* Reinitialize the angle's degree */
       angleDelta = 0;
     }
   };
 
   /* Draw the wheel */
   const wheelDraw = () => {
-    /* Reinitialize the wheel */
+    /* Run the "reinitialize the wheel" function */
     clear();
 
-    /* Draw the wheel */
+    /* Run the "draw the wheel" function */
     drawWheel();
 
-    /* Draw the needle */
+    /* Run the "draw the needle" function */
     drawNeedle();
   };
 
@@ -220,15 +290,18 @@ const SpinningWheelAnimationComponent = (
     /* Set the canvas context */
     const ctx = canvasContext;
 
-    /* Name for each segment */
-    const value = propertiesWheelComponentObj.dataObj.segments[key];
-    //const value = "test 🍔";
+    /* Names - name for each segment */
+    const value = `${propertiesWheelComponentObj.dataObj.segments[
+      key
+    ].substring(0, 20)}`;
 
-    ctx.strokeText(value, 50, 90);
-
-    ctx.save();
+    /* Circle - create a new path to initialize a new draw */
     ctx.beginPath();
+
+    /* Segments - move the element from position x to position y */
     ctx.moveTo(centerX, centerY);
+
+    /* Circle - Draw an arc - here draw a circle */
     ctx.arc(
       centerX,
       centerY,
@@ -237,37 +310,69 @@ const SpinningWheelAnimationComponent = (
       angle,
       false
     );
+
+    /* Circle - draw a line from position x to position y */
     ctx.lineTo(centerX, centerY);
+
+    /* Circle - draw a line back to the starting point */
     ctx.closePath();
 
-    /* Color for each segment */
+    /* Segments - color style for each segment */
     ctx.fillStyle = propertiesWheelComponentObj.dataObj.segColors[key];
 
+    /* Segments - colorize the segments */
     ctx.fill();
-    ctx.stroke();
+
+    /* Context - save the current context */
     ctx.save();
+
+    /* Segments - center the segments names */
     ctx.translate(centerX, centerY);
+
+    /* Names - rotate the segments names  */
     ctx.rotate((lastAngle + angle) / 2);
 
-    ctx.fillStyle = propertiesWheelComponentObj.dataObj.contrastColor;
+    /* Segments - stroke still for each segment's text */
+    //ctx.strokeStyle = "red";
 
+    /* Segments - stroke action */
+    //ctx.stroke();
+
+    /*  */
+    //ctx.fillStyle = propertiesWheelComponentObj.dataObj.contrastColor;
+
+    /* Radius - thickness in px */
+    ctx.lineWidth = 2;
+
+    /* Radius - color style */
     ctx.strokeStyle = "white";
-    ctx.lineWidth = 3;
+
+    /* Radius - stroke action */
     ctx.stroke();
 
-    //ctx.strokeText('Some text', 50, 50);
-
-    /* Font text for each segment */
+    /* Names - font's styles */
     ctx.font = `bold 1em ${propertiesWheelComponentObj.dataObj.fontFamily}`;
 
-    ctx.fillText(
-      value.substring(0, 21),
-      propertiesWheelComponentObj.dataObj.size / 2 + 20,
-      0
-    );
+    /* Names - color style */
+    ctx.fillStyle = "white";
+
+    /* Names - stroke style */
+    ctx.strokeStyle = "gray";
+
+    /* Names - stroke thickness in px */
+    ctx.lineWidth = 0.2;
+
+    /* Names - colorize and position the segments names */
+    ctx.fillText(value, propertiesWheelComponentObj.dataObj.size / 2 + 20, 0);
+
+    /* Names - stroke the segments names */
+    ctx.strokeText(value, propertiesWheelComponentObj.dataObj.size / 2 + 20, 0);
+
+    /* Restores the most recently saved canvas state */
     ctx.restore();
   };
 
+  /* Draw the wheel */
   const drawWheel = () => {
     const ctx = canvasContext;
     let lastAngle = angleCurrent;
@@ -285,9 +390,12 @@ const SpinningWheelAnimationComponent = (
       lastAngle = angle;
     }
 
-    /* Draw a center circle */
+    /* Center circle - create a new path to initialize a new draw */
     ctx.beginPath();
+
+    /* Center circle - Draw an arc - here draw a circle */
     ctx.arc(centerX, centerY, 40, 0, PI2, false);
+
     ctx.closePath();
     ctx.fillStyle = propertiesWheelComponentObj.dataObj.primaryColor;
     ctx.lineWidth = 5;
@@ -303,7 +411,7 @@ const SpinningWheelAnimationComponent = (
     );
     ctx.stroke();
 
-    // Draw outer circle
+    /* Outer circle - create a new path to initialize a new draw */
     ctx.beginPath();
     ctx.arc(
       centerX,
@@ -314,11 +422,18 @@ const SpinningWheelAnimationComponent = (
       false
     );
     ctx.closePath();
-    ctx.lineWidth = 10;
+
+    /* Outer circle - thickness in px */
+    ctx.lineWidth = 5;
+
+    /* Outer circle - color style */
     ctx.strokeStyle = propertiesWheelComponentObj.dataObj.primaryColoraround;
+
+    /* Stroke action */
     ctx.stroke();
   };
 
+  /* Draw the needle */
   const drawNeedle = () => {
     const ctx = canvasContext;
     ctx.lineWidth = 1;
@@ -352,6 +467,7 @@ const SpinningWheelAnimationComponent = (
       );
   };
 
+  /* Reinitialize the canvas */
   const clear = () => {
     const ctx = canvasContext;
     ctx.clearRect(0, 0, 1000, 800);
