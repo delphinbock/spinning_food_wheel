@@ -14,7 +14,7 @@ import { segmentsColorsArr } from "./spinningWheelComponentSlice";
 import SpinningWheelAnimationComponent from "./SpinningWheelAnimationComponent";
 
 /* Main library */
-import { randomHexaColorArray } from "../../libraries/main_library";
+import { randomHexaColorArray } from "../../lib/main_library";
 
 /* Spinning food wheel component */
 const SpinningFoodWheelComponent = () => {
